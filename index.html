@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume Score Navigator - Analysis</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+      :root {
+        --bg: #f4f7fb;
+        --surface: #ffffff;
+        --line: #e7edf5;
+        --text: #0f172a;
+        --muted: #667085;
+        --blue: #2f6df7;
+        --blue-2: #1f58d8;
+        --soft: #f7faff;
+        --radius: 12px;
+        --shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      }
+
+      .wrap { width: min(1220px, 95vw); margin: 0 auto; padding: 10px 0 30px; }
+
+      .topbar {
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #667085;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-weight: 700;
+        color: #344054;
+      }
+
+      .brand-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+        background: linear-gradient(135deg, #4d8fff, #2f6df7);
+      }
+
+      .nav {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .nav .on { color: var(--blue); font-weight: 700; }
+
+      .nav .upgrade {
+        height: 28px;
+        border: 1px solid #d0d5dd;
+        background: #fff;
+        border-radius: 8px;
+        padding: 0 10px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #344054;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .hero {
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 14px;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: 43px;
+        line-height: 1.05;
+        letter-spacing: -0.025em;
+      }
+
+      .hero h1 span { color: var(--blue); }
+
+      .hero p {
+        margin: 10px 0 0;
+        font-size: 13px;
+        color: #667085;
+      }
+
+      .icons {
+        margin-top: 18px;
+        display: inline-flex;
+        gap: 26px;
+        color: #98a2b3;
+        font-size: 10px;
+        text-transform: uppercase;
+      }
+
+      .icons .dot {
+        display: block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin: 0 auto 5px;
+        background: #2f6df7;
+      }
+
+      .est-card {
+        background: #0f234b;
+        border-radius: 14px;
+        padding: 14px;
+        color: #deebff;
+      }
+
+      .est-top {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 10px;
+        text-transform: uppercase;
+        color: #9bb6e8;
+        letter-spacing: .05em;
+      }
+
+      .est-top .live {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #22c55e;
+      }
+
+      .ring {
+        width: 168px;
+        height: 168px;
+        margin: 10px auto 8px;
+        position: relative;
+      }
+
+      .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+      .ring-track {
+        fill: none;
+        stroke: rgba(203, 213, 225, 0.28);
+        stroke-width: 11;
+      }
+      .ring-progress {
+        fill: none;
+        stroke: #2f86ff;
+        stroke-width: 11;
+        stroke-linecap: round;
+        stroke-dasharray: 439.82;
+        stroke-dashoffset: 114.35;
+      }
+
+      .ring-center {
+        position: absolute;
+        inset: 18px;
+        border-radius: 50%;
+        border: 1px solid rgba(203, 213, 225, 0.2);
+        display: grid;
+        place-items: center;
+        text-align: center;
+      }
+
+      .ring-center strong {
+        display: block;
+        font-size: 41px;
+        line-height: 1;
+      }
+
+      .ring-center span {
+        font-size: 10px;
+        text-transform: uppercase;
+        color: #9bb6e8;
+        letter-spacing: .06em;
+      }
+
+      .est-foot {
+        border-top: 1px solid rgba(203, 213, 225, 0.22);
+        padding-top: 9px;
+        font-size: 10px;
+        text-transform: uppercase;
+        color: #9bb6e8;
+      }
+
+      .est-foot strong { color: #ffd35f; }
+
+      .main {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 12px;
+      }
+
+      .left-col {
+        display: grid;
+        gap: 10px;
+      }
+
+      .side-box {
+        padding: 12px;
+        min-height: 164px;
+      }
+
+      .side-title {
+        margin: 0;
+        font-size: 10px;
+        color: #98a2b3;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+      }
+
+      .upload {
+        margin-top: 10px;
+        border: 1px dashed #d0d5dd;
+        border-radius: 9px;
+        background: #fbfcff;
+        height: 96px;
+        display: grid;
+        place-items: center;
+        color: #98a2b3;
+        font-size: 11px;
+        text-align: center;
+      }
+
+      .textarea {
+        margin-top: 10px;
+        width: 100%;
+        min-height: 180px;
+        resize: vertical;
+        border: 1px solid #d0d5dd;
+        border-radius: 9px;
+        padding: 10px;
+        font: inherit;
+        font-size: 12px;
+      }
+
+      .weights {
+        padding: 14px;
+      }
+
+      .weights-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .weights-top h3 {
+        margin: 0;
+        font-size: 11px;
+        color: #98a2b3;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+      }
+
+      .weights-top span {
+        font-size: 10px;
+        color: #98a2b3;
+        text-transform: uppercase;
+      }
+
+      .weight-grid {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .group {
+        border: 1px solid #e7edf5;
+        border-radius: 10px;
+        background: #fff;
+        padding: 10px;
+      }
+
+      .group h4 {
+        margin: 0 0 8px;
+        font-size: 10px;
+        color: #98a2b3;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+      }
+
+      label {
+        display: block;
+        font-size: 11px;
+        color: #475467;
+        margin-bottom: 5px;
+      }
+
+      select, textarea, input {
+        width: 100%;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        padding: 8px 9px;
+        font: inherit;
+        font-size: 12px;
+        color: #101828;
+        background: #fff;
+      }
+
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .btn-row {
+        margin-top: 10px;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .primary {
+        height: 34px;
+        border: 1px solid #2f6df7;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #2f6df7, #1f58d8);
+        color: #fff;
+        padding: 0 14px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .section-title {
+        margin: 28px 0 6px;
+        text-align: center;
+        font-size: 42px;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+      }
+
+      .section-sub {
+        margin: 0 0 16px;
+        text-align: center;
+        color: #667085;
+        font-size: 13px;
+      }
+
+      .benefits {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .benefit {
+        padding: 20px;
+        text-align: center;
+      }
+
+      .benefit .ico {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin: 0 auto 10px;
+        background: #edf3ff;
+        display: grid;
+        place-items: center;
+        color: #2f6df7;
+        font-weight: 800;
+      }
+
+      .benefit h5 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        line-height: 1.2;
+      }
+
+      .benefit p {
+        margin: 0;
+        color: #667085;
+        font-size: 12px;
+      }
+
+      .faq {
+        margin-top: 16px;
+        padding: 14px;
+      }
+
+      .faq-head {
+        text-align: center;
+        font-size: 10px;
+        color: #98a2b3;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+      }
+
+      .faq-grid {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+
+      .faq-item h6 {
+        margin: 0 0 5px;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: .02em;
+      }
+
+      .faq-item p {
+        margin: 0;
+        color: #667085;
+        font-size: 11px;
+        line-height: 1.45;
+      }
+
+      .footer {
+        margin-top: 12px;
+        color: #98a2b3;
+        font-size: 10px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      @media (max-width: 980px) {
+        .hero, .main, .weight-grid, .benefits, .faq-grid { grid-template-columns: 1fr; }
+        .hero h1 { font-size: 30px; }
+        .section-title { font-size: 30px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="topbar">
+        <div class="brand"><span class="brand-dot"></span>RESUME SCORE NAVIGATOR</div>
+        <div class="nav">
+          <span class="on">ANALYSIS</span>
+          <span>RESUME LAB</span>
+          <span>SETTINGS</span>
+          <button class="upgrade">Upgrade Pro</button>
+        </div>
+      </header>
+
+      <section class="card hero">
+        <div>
+          <h1>Should You Apply?<br /><span>Know Your Interview Odds.</span></h1>
+          <p>Evaluate the 11 key strategic factors that determine if your resume actually gets seen by a human recruiter.</p>
+          <div class="icons">
+            <div><span class="dot"></span>RELEVANCE</div>
+            <div><span class="dot"></span>TITLE</div>
+            <div><span class="dot"></span>REFERRAL</div>
+            <div><span class="dot"></span>MARKET</div>
+          </div>
+        </div>
+
+        <aside class="est-card">
+          <div class="est-top"><span class="live"></span>LIVE ESTIMATION</div>
+          <div class="ring">
+            <svg viewBox="0 0 160 160" aria-hidden="true">
+              <circle class="ring-track" cx="80" cy="80" r="70"></circle>
+              <circle class="ring-progress" id="previewRing" cx="80" cy="80" r="70"></circle>
+            </svg>
+            <div class="ring-center">
+              <div><strong id="previewScore">74</strong><span>Baseline Score</span></div>
+            </div>
+          </div>
+          <div class="est-foot">MARKET SATURATION <strong>MODERATE</strong></div>
+        </aside>
+      </section>
+
+      <section class="main">
+        <aside class="left-col">
+          <div class="card side-box">
+            <h3 class="side-title">Resume Field</h3>
+            <div class="upload">CURRENT_RESUME.PDF</div>
+          </div>
+
+          <div class="card side-box" style="min-height: 310px;">
+            <h3 class="side-title">Target Job Description</h3>
+            <textarea id="jd" class="textarea" placeholder="Paste full JD here..."></textarea>
+          </div>
+        </aside>
+
+        <div class="card weights">
+          <div class="weights-top">
+            <h3>Strategic Weights</h3>
+            <span>INTERACTIVE ACTIVE</span>
+          </div>
+
+          <div class="weight-grid">
+            <div class="group">
+              <h4>Role Match & Credentials</h4>
+              <label for="resume">Resume Content</label>
+              <textarea id="resume" style="min-height:130px;" placeholder="Paste your resume text..."></textarea>
+              <div class="two" style="margin-top:8px;">
+                <div><label>Title Match</label><select id="title"><option selected>Aligned</option><option>Not Aligned</option></select></div>
+                <div><label>Education</label><select id="education"><option>Strong</option><option selected>Partial</option><option>Low</option></select></div>
+              </div>
+              <label>Relevant Experience</label>
+              <select id="experience"><option>Under 1 year</option><option>1-2 years</option><option selected>2-4 years</option><option>4-6 years</option><option>6+ years</option></select>
+            </div>
+
+            <div class="group">
+              <h4>Timing & Referrals</h4>
+              <div class="two">
+                <div><label>Posting Recency</label><select id="timing"><option>Within 24h</option><option selected>Within 3 days</option><option>Within 1 week</option><option>1-3 weeks</option><option>After 1 month</option></select></div>
+                <div><label>Referral</label><select id="referral"><option>Has Referral</option><option selected>No Referral</option></select></div>
+              </div>
+              <div class="two">
+                <div><label>Channel</label><select id="channel"><option selected>Direct Employer</option><option>Agency</option></select></div>
+                <div><label>Repost</label><select id="repost"><option value="no" selected>No</option><option value="yes">Yes</option></select></div>
+              </div>
+              <label>Company Size</label>
+              <select id="companySize"><option>1000+</option><option selected>100-999</option><option>50-100</option><option>Under 50</option></select>
+            </div>
+
+            <div class="group">
+              <h4>Market Context</h4>
+              <div class="two">
+                <div><label>Work Continuity</label><select id="continuity"><option>Under 1 year</option><option>1-2 years</option><option selected>2-3 years</option><option>3+ years</option></select></div>
+                <div><label>Location</label><select id="location"><option selected>Same City</option><option>Same State</option><option>Out of State</option></select></div>
+              </div>
+              <label>Status Goal</label>
+              <input id="statusGoal" placeholder="Interview in 2 weeks" />
+              <p style="margin: 10px 0 0; color:#667085; font-size:12px;">Complete the analysis to open your full dashboard report.</p>
+            </div>
+          </div>
+
+          <div class="btn-row"><button id="analyzeBtn" class="primary">ANALYZE MY CHANCES</button></div>
+        </div>
+      </section>
+
+      <h2 class="section-title">Next Steps & Benefits</h2>
+      <p class="section-sub">After analyzing your application, we provide a roadmap to maximize your hiring potential.</p>
+
+      <section class="benefits">
+        <article class="card benefit">
+          <div class="ico">✓</div>
+          <h5>Get Your Score with Real Data</h5>
+          <p>Weighted logic algorithm, accurate assessment, and actionable outcomes.</p>
+        </article>
+        <article class="card benefit">
+          <div class="ico">●</div>
+          <h5>Receive Tailored Application Advice</h5>
+          <p>Keyword optimization, strategic timing, and referral opportunities.</p>
+        </article>
+        <article class="card benefit">
+          <div class="ico">↻</div>
+          <h5>Record & Track Your Results</h5>
+          <p>Efficient result management, reflection loop, and history alignment.</p>
+        </article>
+      </section>
+
+      <section class="card faq">
+        <div class="faq-head">Frequently Asked Questions</div>
+        <div class="faq-grid">
+          <div class="faq-item"><h6>WHAT IS AN ATS SCORE?</h6><p>An Applicant Tracking System score determines your resume visibility after algorithm pre-screening.</p></div>
+          <div class="faq-item"><h6>HOW TO GET AN INTERVIEW RESULT?</h6><p>Focus on recency, role-title alignment, and referral support before submission.</p></div>
+          <div class="faq-item"><h6>WHY DOES COMPANY SIZE MATTER?</h6><p>Hiring volume and process speed differ by employer size and role demand.</p></div>
+          <div class="faq-item"><h6>IS MY RESUME DATA SAFE?</h6><p>In this prototype, your data remains in local browser storage only.</p></div>
+        </div>
+      </section>
+
+      <div class="footer">
+        <span>© 2026 RESUME SCORE NAVIGATOR OPS. ALL RIGHTS RESERVED.</span>
+        <span>PRIVACY NOW · RESUME TRENDS 2026 · SUPPORT</span>
+      </div>
+    </div>
+
+    <script>
+      function extractTokens(text) {
+        return (text.toLowerCase().match(/[a-z][a-z0-9+#.]{1,}/g) || []).map((v) => v.trim());
+      }
+
+      function clamp(n, min = 0, max = 100) { return Math.max(min, Math.min(max, n)); }
+
+      function calcMatch(resume, jd) {
+        const jdSet = new Set(extractTokens(jd));
+        const rsSet = new Set(extractTokens(resume));
+        if (jdSet.size < 8 || rsSet.size < 8) return 60;
+        let overlap = 0;
+        jdSet.forEach((x) => { if (rsSet.has(x)) overlap += 1; });
+        return clamp(Math.round((overlap / jdSet.size) * 100));
+      }
+
+      function setPreview(score) {
+        const circumference = 439.82;
+        const offset = circumference * (1 - score / 100);
+        document.getElementById('previewRing').style.strokeDashoffset = offset.toFixed(2);
+        document.getElementById('previewScore').textContent = score;
+      }
+
+      function estimatePreview() {
+        const jd = document.getElementById('jd').value || '';
+        const resume = document.getElementById('resume').value || '';
+        const score = clamp(Math.round(52 + ((calcMatch(resume, jd) - 50) * 0.35)));
+        setPreview(score);
+      }
+
+      ['jd', 'resume'].forEach((id) => document.getElementById(id).addEventListener('input', estimatePreview));
+
+      document.getElementById('analyzeBtn').addEventListener('click', () => {
+        const payload = {
+          jd: document.getElementById('jd').value,
+          resume: document.getElementById('resume').value,
+          timing: document.getElementById('timing').value,
+          referral: document.getElementById('referral').value,
+          companySize: document.getElementById('companySize').value,
+          repost: document.getElementById('repost').value,
+          experience: document.getElementById('experience').value,
+          title: document.getElementById('title').value,
+          continuity: document.getElementById('continuity').value,
+          location: document.getElementById('location').value,
+          channel: document.getElementById('channel').value,
+          education: document.getElementById('education').value,
+          statusGoal: document.getElementById('statusGoal').value
+        };
+        localStorage.setItem('ips:input', JSON.stringify(payload));
+        window.location.href = './output.html';
+      });
+
+      setPreview(74);
+      estimatePreview();
+    </script>
+  </body>
+</html>

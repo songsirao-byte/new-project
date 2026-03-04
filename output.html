@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume Score Navigator - Dashboard</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+      :root {
+        --bg: #f4f7fb;
+        --surface: #ffffff;
+        --line: #e7edf5;
+        --text: #0f172a;
+        --muted: #667085;
+        --blue: #2f6df7;
+        --green: #12b76a;
+        --amber: #f59e0b;
+        --red: #ef4444;
+        --radius: 12px;
+        --shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      }
+
+      .wrap { width: min(1220px, 95vw); margin: 0 auto; padding: 10px 0 30px; }
+
+      .topbar {
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #667085;
+        font-size: 12px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-weight: 700;
+        color: #344054;
+      }
+
+      .brand-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+        background: linear-gradient(135deg, #4d8fff, #2f6df7);
+      }
+
+      .nav {
+        display: inline-flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .nav .on { color: var(--blue); font-weight: 700; }
+
+      .avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #e4e7ec, #cfd4dc);
+        border: 1px solid #d0d5dd;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .hero {
+        margin-top: 6px;
+        padding: 18px;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: 46px;
+        line-height: 1.04;
+        letter-spacing: -0.025em;
+      }
+
+      .hero-sub {
+        margin-top: 8px;
+        color: #98a2b3;
+        font-size: 11px;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+
+      .top-grid {
+        margin-top: 14px;
+        display: grid;
+        grid-template-columns: 1.2fr .8fr;
+        gap: 12px;
+      }
+
+      .score-card {
+        border: 1px solid #e7edf5;
+        border-radius: 10px;
+        padding: 14px;
+      }
+
+      .score-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .score-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .ring {
+        width: 124px;
+        height: 124px;
+        position: relative;
+      }
+
+      .ring svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+      }
+
+      .ring-track {
+        fill: none;
+        stroke: #e5eefb;
+        stroke-width: 11;
+      }
+
+      .ring-progress {
+        fill: none;
+        stroke: var(--blue);
+        stroke-width: 11;
+        stroke-linecap: round;
+        stroke-dasharray: 326.73;
+        stroke-dashoffset: 58.81;
+      }
+
+      .ring-center {
+        position: absolute;
+        inset: 16px;
+        border: 1px solid #e7edf5;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        text-align: center;
+      }
+
+      .ring-center strong {
+        display: block;
+        font-size: 34px;
+        line-height: 1;
+      }
+
+      .ring-center span {
+        font-size: 10px;
+        color: #667085;
+        text-transform: uppercase;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        border: 1px solid #abefc6;
+        background: #ecfdf3;
+        color: #027a48;
+        padding: 4px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .score-left h2 {
+        margin: 8px 0 0;
+        font-size: 29px;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+      }
+
+      .score-left p {
+        margin: 6px 0 0;
+        color: #667085;
+        font-size: 12px;
+        max-width: 600px;
+      }
+
+      .actions {
+        display: inline-flex;
+        gap: 8px;
+      }
+
+      .btn {
+        height: 32px;
+        border-radius: 8px;
+        padding: 0 12px;
+        border: 1px solid #d0d5dd;
+        background: #fff;
+        color: #344054;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .btn.primary {
+        border-color: #2f6df7;
+        background: linear-gradient(135deg, #2f6df7, #1f58d8);
+        color: #fff;
+      }
+
+      .stat-row {
+        margin-top: 12px;
+        display: inline-flex;
+        gap: 18px;
+      }
+
+      .stat .k {
+        color: #98a2b3;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+      }
+
+      .stat .v {
+        margin-top: 2px;
+        font-size: 12px;
+        color: #344054;
+        font-weight: 700;
+      }
+
+      .side-col {
+        display: grid;
+        gap: 10px;
+      }
+
+      .mini {
+        border: 1px solid #e7edf5;
+        border-radius: 10px;
+        padding: 12px;
+      }
+
+      .mini h4 {
+        margin: 0;
+        font-size: 12px;
+      }
+
+      .gap {
+        margin-top: 8px;
+        border: 1px solid #ffd8dd;
+        background: #fff6f7;
+        border-radius: 8px;
+        padding: 8px;
+      }
+
+      .gap.warn {
+        border-color: #ffe0b2;
+        background: #fff8ef;
+      }
+
+      .gap strong { font-size: 12px; }
+      .gap p { margin: 4px 0 0; font-size: 11px; color: #667085; }
+
+      .talent {
+        border: 1px solid #d8e2f6;
+        background: #f9fbff;
+        border-radius: 10px;
+        padding: 12px;
+      }
+
+      .talent .k { color: #98a2b3; font-size: 10px; text-transform: uppercase; }
+
+      .talent-num {
+        margin-top: 6px;
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+      }
+
+      .talent-num strong {
+        font-size: 34px;
+        line-height: 1;
+        letter-spacing: -0.02em;
+      }
+
+      .talent-num small {
+        color: #f04438;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .line {
+        margin-top: 6px;
+        height: 8px;
+        border-radius: 999px;
+        background: #e4ebf4;
+        overflow: hidden;
+      }
+
+      .line > span {
+        display: block;
+        height: 100%;
+        width: 84%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #22c55e, #16a34a);
+      }
+
+      .grid {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: 1.2fr .8fr;
+        gap: 12px;
+      }
+
+      .advice {
+        padding: 14px;
+      }
+
+      .advice h3 {
+        margin: 0;
+        font-size: 13px;
+      }
+
+      .advice-grid {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .advice-item {
+        border: 1px solid #e7edf5;
+        border-radius: 10px;
+        padding: 10px;
+        background: #f8fbff;
+      }
+
+      .advice-item .n {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #2f6df7;
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .advice-item strong {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+      }
+
+      .advice-item p {
+        margin: 4px 0 0;
+        font-size: 11px;
+        color: #667085;
+      }
+
+      .context {
+        padding: 14px;
+      }
+
+      .context h3 {
+        margin: 0;
+        font-size: 13px;
+      }
+
+      .context p {
+        margin: 6px 0 0;
+        font-size: 12px;
+        color: #667085;
+      }
+
+      .feedback {
+        margin-top: 12px;
+        padding: 14px;
+      }
+
+      .feedback h3 {
+        margin: 0;
+        font-size: 24px;
+        letter-spacing: -0.01em;
+      }
+
+      .feedback p {
+        margin: 6px 0 0;
+        color: #667085;
+        font-size: 12px;
+      }
+
+      .feed-grid {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: 180px 1fr 120px;
+        gap: 8px;
+      }
+
+      select, input {
+        width: 100%;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        padding: 8px 9px;
+        font: inherit;
+        font-size: 12px;
+      }
+
+      .history {
+        margin-top: 10px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .hist {
+        border: 1px solid #e7edf5;
+        border-radius: 9px;
+        padding: 9px;
+      }
+
+      .bottom {
+        margin-top: 14px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .article {
+        padding: 16px;
+      }
+
+      .article h4 {
+        margin: 0 0 6px;
+        font-size: 30px;
+        line-height: 1.12;
+        letter-spacing: -0.02em;
+      }
+
+      .article p {
+        margin: 0;
+        color: #667085;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      footer {
+        margin-top: 14px;
+        border-top: 1px solid #e7edf5;
+        padding-top: 12px;
+        display: grid;
+        grid-template-columns: 1fr auto auto auto;
+        gap: 20px;
+        color: #667085;
+        font-size: 12px;
+      }
+
+      .ft {
+        color: #101828;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      @media (max-width: 980px) {
+        .top-grid, .grid, .advice-grid, .feed-grid, .bottom, footer { grid-template-columns: 1fr; }
+        .hero h1 { font-size: 32px; }
+        .score-left h2 { font-size: 24px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="topbar">
+        <div class="brand"><span class="brand-dot"></span>Resume Score Navigator.</div>
+        <div class="nav"><span class="on">Dashboard</span><span>Market Trends</span><span>Resume Builder</span><span class="avatar"></span></div>
+      </header>
+
+      <section class="card hero">
+        <h1>Hack Your Resume Score for Your Next Interview</h1>
+        <div class="hero-sub">Comprehensive strategy breakdown for senior software engineer</div>
+
+        <div class="top-grid">
+          <div class="score-card">
+            <div class="score-header">
+              <div class="score-left">
+                <div class="ring">
+                  <svg viewBox="0 0 120 120" aria-hidden="true">
+                    <circle class="ring-track" cx="60" cy="60" r="52"></circle>
+                    <circle class="ring-progress" id="scoreRing" cx="60" cy="60" r="52"></circle>
+                  </svg>
+                  <div class="ring-center"><div><strong id="score">82</strong><span>Score</span></div></div>
+                </div>
+                <div>
+                  <div class="badge" id="fitBadge">Optimal Fit</div>
+                  <h2>Interview Probability: <span id="scoreLabel">Very High</span></h2>
+                  <p>Your application profile is statistically positioned in the top percentile for this role based on our multi-factor strategy model.</p>
+                </div>
+              </div>
+              <div class="actions">
+                <button class="btn" onclick="location.href='./index.html'">Share Report</button>
+                <button class="btn primary">Update Analysis</button>
+              </div>
+            </div>
+
+            <div class="stat-row">
+              <div class="stat"><div class="k">Match Score</div><div class="v" id="matchStat">--</div></div>
+              <div class="stat"><div class="k">AI Strategy Impact</div><div class="v" id="strategyStat">--</div></div>
+              <div class="stat"><div class="k">Market Dynamics</div><div class="v" id="marketStat">--</div></div>
+            </div>
+          </div>
+
+          <aside class="side-col">
+            <div class="mini">
+              <h4>Optimization Gaps</h4>
+              <div class="gap warn"><strong>Timing Risk</strong><p>Competitive tier opened over 72h window in this cycle.</p></div>
+              <div class="gap"><strong>Cold Apply Penalty</strong><p>No referral signal detected for this application path.</p></div>
+            </div>
+
+            <div class="talent">
+              <div class="k">Talent Pool Context</div>
+              <div style="margin-top:5px; color:#667085; font-size:11px;">Applicants in last 24h</div>
+              <div class="talent-num"><strong>342</strong><small>-15.5% 24h</small></div>
+              <div style="margin-top:4px; color:#667085; font-size:11px;">Match Confidence</div>
+              <div class="line"><span id="confidenceBar"></span></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card advice">
+          <h3>Our Advice</h3>
+          <div class="advice-grid" id="tipList"></div>
+        </div>
+
+        <div class="card context">
+          <h3>Score Calculation Log</h3>
+          <p>Technical and service alignment, work continuity, posting recency, and title matching are weighted to estimate your current interview probability.</p>
+          <p id="snapshotText" style="margin-top:10px;">Input snapshot will appear here.</p>
+        </div>
+      </section>
+
+      <section class="card feedback">
+        <h3>Fill in your application result</h3>
+        <p>The primary feedback loop records your progress and improves score calibration for your profile over time.</p>
+        <div class="feed-grid">
+          <select id="status"><option>Applied</option><option>Interview</option><option>Final Round</option><option>Offer</option><option>Rejected</option></select>
+          <input id="note" placeholder="Notes: company, role, interview feedback" />
+          <button id="saveFeedback" class="btn primary">Save</button>
+        </div>
+        <div id="history" class="history"></div>
+      </section>
+
+      <section class="bottom">
+        <article class="card article">
+          <h4>Mastering the Timing</h4>
+          <p>The golden window for applications in this field is 48 hours after a posting goes live. Our market dynamics engine monitors posting recency in real-time to alert you when your match probability is at its peak.</p>
+        </article>
+        <article class="card article">
+          <h4>Why Work Continuity Matters</h4>
+          <p>Recruiters at top-tier firms use tenure as a proxy for role fit and long-term performance. Our tenure analysis does not just look at years. It evaluates role-specific stability expectations for your seniority level.</p>
+        </article>
+      </section>
+
+      <footer>
+        <div>
+          <div class="ft">ResumeScore.</div>
+          <div>Leveraging data science to give job seekers an unfair advantage in the application process.</div>
+        </div>
+        <div>
+          <div class="ft">Analysis Tools</div>
+          <div>Resume Scoring</div>
+          <div>Market Demand</div>
+          <div>Referral Tracker</div>
+        </div>
+        <div>
+          <div class="ft">Resources</div>
+          <div>Strategy Guides</div>
+          <div>Interview Database</div>
+          <div>Success Stories</div>
+        </div>
+        <div>
+          <div class="ft">Support</div>
+          <div>Contact Us</div>
+          <div>Privacy Policy</div>
+          <div>API Access</div>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      const weightMap = {
+        timing: { "Within 24h": 12, "Within 3 days": 8, "Within 1 week": 3, "1-3 weeks": -6, "After 1 month": -12 },
+        referral: { "Has Referral": 12, "No Referral": 0 },
+        companySize: { "1000+": -3, "100-999": 0, "50-100": 3, "Under 50": 5 },
+        experience: { "Under 1 year": -8, "1-2 years": -4, "2-4 years": 4, "4-6 years": 6, "6+ years": 5 },
+        title: { "Aligned": 8, "Not Aligned": -8 },
+        continuity: { "Under 1 year": -8, "1-2 years": -2, "2-3 years": 4, "3+ years": 6 },
+        location: { "Same City": 7, "Same State": 3, "Out of State": -7 },
+        channel: { "Direct Employer": 4, "Agency": -5 },
+        education: { "Strong": 5, "Partial": 1, "Low": -5 }
+      };
+
+      const tips = {
+        resumeMatch: "Move JD critical keywords into the top third of your resume and include measurable outcomes.",
+        timing: "Apply within the first 72 hours to increase recruiter visibility.",
+        referral: "Build at least three warm referral paths in target companies.",
+        companySize: "Expand to mid-size employers in the same vertical for higher conversion speed.",
+        repost: "Lower priority for reposted jobs unless referral support exists.",
+        experience: "State relevant years and flagship projects more clearly in your summary.",
+        title: "Align your headline and recent titles with the target role naming.",
+        continuity: "Add one line explaining transitions to reduce continuity risk.",
+        location: "Prioritize same-city and same-state opportunities first.",
+        channel: "Use direct employer channels as primary and agency as secondary.",
+        education: "Move aligned degree and certifications higher in the resume hierarchy."
+      };
+
+      function clamp(n, min = 0, max = 100) { return Math.max(min, Math.min(max, n)); }
+
+      function extractTokens(text) {
+        return (text.toLowerCase().match(/[a-z][a-z0-9+#.]{1,}/g) || []).map((v) => v.trim());
+      }
+
+      function calcMatch(resume, jd) {
+        const jdSet = new Set(extractTokens(jd || ""));
+        const rsSet = new Set(extractTokens(resume || ""));
+        if (jdSet.size < 8 || rsSet.size < 8) return 60;
+        let overlap = 0;
+        jdSet.forEach((x) => { if (rsSet.has(x)) overlap += 1; });
+        return clamp(Math.round((overlap / jdSet.size) * 100));
+      }
+
+      function compute(input) {
+        const match = calcMatch(input.resume, input.jd);
+        const factors = [
+          { key: "resumeMatch", impact: Math.round((match - 50) * 0.32), note: match + "%" },
+          { key: "timing", impact: weightMap.timing[input.timing] || 0 },
+          { key: "referral", impact: weightMap.referral[input.referral] || 0 },
+          { key: "companySize", impact: weightMap.companySize[input.companySize] || 0 },
+          { key: "repost", impact: input.repost === "yes" ? -8 : 2 },
+          { key: "experience", impact: weightMap.experience[input.experience] || 0 },
+          { key: "title", impact: weightMap.title[input.title] || 0 },
+          { key: "continuity", impact: weightMap.continuity[input.continuity] || 0 },
+          { key: "location", impact: weightMap.location[input.location] || 0 },
+          { key: "channel", impact: weightMap.channel[input.channel] || 0 },
+          { key: "education", impact: weightMap.education[input.education] || 0 }
+        ];
+
+        const score = clamp(52 + factors.reduce((s, f) => s + f.impact, 0));
+        const strategy = clamp(50 + factors.filter((x) => ["timing", "referral", "channel", "title"].includes(x.key)).reduce((s, x) => s + x.impact, 0));
+        const market = clamp(50 + factors.filter((x) => ["companySize", "location", "repost"].includes(x.key)).reduce((s, x) => s + x.impact, 0));
+
+        const riskKeys = factors.filter((f) => f.impact < 0).sort((a, b) => a.impact - b.impact).slice(0, 4).map((x) => x.key);
+        ["resumeMatch", "timing", "referral", "title"].forEach((k) => {
+          if (riskKeys.length < 4 && !riskKeys.includes(k)) riskKeys.push(k);
+        });
+
+        return { score, match, strategy, market, suggestions: riskKeys.slice(0, 4).map((k) => tips[k]) };
+      }
+
+      function render() {
+        const input = JSON.parse(localStorage.getItem('ips:input') || '{}');
+        const data = compute(input);
+
+        document.getElementById('score').textContent = data.score;
+        const circumference = 326.73;
+        const offset = circumference * (1 - (data.score / 100));
+        document.getElementById('scoreRing').style.strokeDashoffset = offset.toFixed(2);
+
+        document.getElementById('matchStat').textContent = data.match + '%';
+        document.getElementById('strategyStat').textContent = data.strategy + '%';
+        document.getElementById('marketStat').textContent = data.market + '%';
+
+        const confidence = clamp(Math.round((data.match * 0.45) + (data.strategy * 0.35) + (data.market * 0.20)));
+        document.getElementById('confidenceBar').style.width = confidence + '%';
+
+        let label = 'Very High';
+        let badgeText = 'Optimal Fit';
+        const badge = document.getElementById('fitBadge');
+
+        if (data.score < 50) {
+          label = 'Low';
+          badgeText = 'Low Fit';
+          badge.style.background = '#fef3f2';
+          badge.style.color = '#b42318';
+          badge.style.borderColor = '#fecdca';
+        } else if (data.score < 75) {
+          label = 'Medium';
+          badgeText = 'Potential Fit';
+          badge.style.background = '#fffaeb';
+          badge.style.color = '#b54708';
+          badge.style.borderColor = '#fedf89';
+        }
+
+        badge.textContent = badgeText;
+        document.getElementById('scoreLabel').textContent = label;
+
+        const tipList = document.getElementById('tipList');
+        tipList.innerHTML = '';
+        data.suggestions.forEach((text, i) => {
+          const item = document.createElement('div');
+          item.className = 'advice-item';
+          item.innerHTML = `<span class="n">${i + 1}</span><strong>Action Recommendation</strong><p>${text}</p>`;
+          tipList.appendChild(item);
+        });
+
+        const snapshotParts = [];
+        if (input.statusGoal) snapshotParts.push(`Goal: ${input.statusGoal}`);
+        if (input.location) snapshotParts.push(`Location: ${input.location}`);
+        if (input.referral) snapshotParts.push(`Referral: ${input.referral}`);
+        if (input.companySize) snapshotParts.push(`Company Size: ${input.companySize}`);
+        document.getElementById('snapshotText').textContent = snapshotParts.length ? snapshotParts.join(' | ') : 'No input snapshot found.';
+      }
+
+      function loadHistory() {
+        try {
+          return JSON.parse(localStorage.getItem('ips:feedbackHistory') || '[]');
+        } catch {
+          return [];
+        }
+      }
+
+      function drawHistory() {
+        const items = loadHistory();
+        const box = document.getElementById('history');
+        box.innerHTML = '';
+        if (!items.length) {
+          box.innerHTML = '<div class="hist" style="color:#667085; font-size:12px;">No feedback entries yet.</div>';
+          return;
+        }
+
+        items.forEach((x) => {
+          const div = document.createElement('div');
+          div.className = 'hist';
+          div.innerHTML = `<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;"><strong style="font-size:12px;">${x.status}</strong><span style="font-size:11px;color:#667085;">Score ${x.score}</span><span style="font-size:11px;color:#667085;">${new Date(x.createdAt).toLocaleString()}</span></div><div style="margin-top:4px;color:#667085;font-size:11px;">${x.note || 'No notes'}</div>`;
+          box.appendChild(div);
+        });
+      }
+
+      document.getElementById('saveFeedback').addEventListener('click', () => {
+        const history = loadHistory();
+        history.unshift({
+          id: Date.now(),
+          status: document.getElementById('status').value,
+          note: document.getElementById('note').value.trim(),
+          score: Number(document.getElementById('score').textContent) || 0,
+          createdAt: Date.now()
+        });
+        localStorage.setItem('ips:feedbackHistory', JSON.stringify(history.slice(0, 30)));
+        document.getElementById('note').value = '';
+        drawHistory();
+      });
+
+      render();
+      drawHistory();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interview Probability Score - Visual Diagrams</title>
+  <style>
+    body { margin:0; font-family:"Avenir Next","PingFang SC","Microsoft YaHei",sans-serif; background:#f8fafc; color:#0f172a; }
+    .wrap{ max-width:1200px; margin:0 auto; padding:24px; }
+    h1{ margin:0 0 16px; }
+    .card{ background:#fff; border:1px solid #dbe3ee; border-radius:16px; padding:16px; margin-bottom:14px; }
+    .title{ font-size:18px; font-weight:800; margin-bottom:10px; }
+    .flow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .node{ padding:10px 12px; border:1px solid #cbd5e1; border-radius:12px; background:#f8fafc; font-size:13px; font-weight:700; }
+    .db{ background:#eff6ff; border-color:#93c5fd; }
+    .model{ background:#ecfeff; border-color:#67e8f9; }
+    .warn{ background:#fff7ed; border-color:#fdba74; }
+    .ok{ background:#ecfdf5; border-color:#86efac; }
+    .arrow{ font-weight:900; color:#475569; }
+    .grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media (max-width: 860px){ .grid{ grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Interview Probability Score · 可视化图</h1>
+
+    <div class="card">
+      <div class="title">1) 爬虫总体架构图</div>
+      <div class="flow">
+        <div class="node">Source Discovery</div><div class="arrow">→</div>
+        <div class="node">Fetcher</div><div class="arrow">→</div>
+        <div class="node">Parser (JSON-LD / DOM)</div><div class="arrow">→</div>
+        <div class="node">Normalizer</div><div class="arrow">→</div>
+        <div class="node">Dedupe + Repost Detector</div><div class="arrow">→</div>
+        <div class="node db">Postgres</div><div class="arrow">→</div>
+        <div class="node model">Feature Builder</div><div class="arrow">→</div>
+        <div class="node model">Score Engine</div><div class="arrow">→</div>
+        <div class="node">Tool Page/API</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="title">2) 调度策略图</div>
+        <div class="flow" style="flex-direction:column; align-items:stretch;">
+          <div class="node ok">0-3天岗位 → 每30-60分钟抓取</div>
+          <div class="node">4-7天岗位 → 每3-6小时抓取</div>
+          <div class="node warn">8-30天岗位 → 每天抓取</div>
+          <div class="node warn">下线>7天 → 每周巡检</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="title">3) 评分特征注入图</div>
+        <div class="flow">
+          <div class="node">Raw Job Data</div><div class="arrow">→</div>
+          <div class="node">freshness_score</div><div class="arrow">→</div>
+          <div class="node">repost_risk</div><div class="arrow">→</div>
+          <div class="node">competition_proxy</div><div class="arrow">→</div>
+          <div class="node model">Weighted Model</div><div class="arrow">→</div>
+          <div class="node model">0-100 Score</div><div class="arrow">→</div>
+          <div class="node">High/Medium/Low + Suggestions</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title">4) 监控指标关系图</div>
+      <div class="flow">
+        <div class="node">Crawl Success Rate</div><div class="arrow">→</div>
+        <div class="node">Pipeline Health</div><div class="arrow">→</div>
+        <div class="node warn">Alerting</div>
+      </div>
+      <div class="flow" style="margin-top:8px;">
+        <div class="node">Parse Success Rate</div><div class="arrow">→</div>
+        <div class="node">Field Missing Rate</div><div class="arrow">→</div>
+        <div class="node">Duplicate Rate</div>
+      </div>
+      <div class="flow" style="margin-top:8px;">
+        <div class="node">Feature Freshness</div><div class="arrow">→</div>
+        <div class="node">Prediction vs Outcome Gap</div><div class="arrow">→</div>
+        <div class="node">Model Quality</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
