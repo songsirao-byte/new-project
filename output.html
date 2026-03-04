@@ -673,7 +673,23 @@
       }
 
       function render() {
-        const input = JSON.parse(localStorage.getItem('ips:input') || '{}');
+        const demoInput = {
+          jd: "Senior Software Engineer backend distributed systems cloud API performance",
+          resume: "Backend engineer with distributed systems and cloud API optimization experience",
+          timing: "Within 3 days",
+          referral: "No Referral",
+          companySize: "100-999",
+          repost: "no",
+          experience: "2-4 years",
+          title: "Aligned",
+          continuity: "2-3 years",
+          location: "Same City",
+          channel: "Direct Employer",
+          education: "Partial",
+          statusGoal: "Interview in 2 weeks"
+        };
+        const cached = localStorage.getItem('ips:input');
+        const input = cached ? JSON.parse(cached) : demoInput;
         const data = compute(input);
 
         document.getElementById('score').textContent = data.score;
@@ -723,7 +739,11 @@
         if (input.location) snapshotParts.push(`Location: ${input.location}`);
         if (input.referral) snapshotParts.push(`Referral: ${input.referral}`);
         if (input.companySize) snapshotParts.push(`Company Size: ${input.companySize}`);
-        document.getElementById('snapshotText').textContent = snapshotParts.length ? snapshotParts.join(' | ') : 'No input snapshot found.';
+        if (!cached) {
+          document.getElementById('snapshotText').textContent = 'Demo mode: no local analysis input found yet. Go to input page and click ANALYZE MY CHANCES for personalized results.';
+        } else {
+          document.getElementById('snapshotText').textContent = snapshotParts.length ? snapshotParts.join(' | ') : 'No input snapshot found.';
+        }
       }
 
       function loadHistory() {
